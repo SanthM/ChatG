@@ -1,0 +1,15 @@
+{
+  "dependencies": {
+    "whatsapp-web.js": "^1.13.1",
+    "@openai/api": "^0.9.3",
+    "axios": "^0.24.0"
+  },
+  "scripts": {
+    "start": "node index.js"
+  },
+  "main": "index.js",
+  "type": "module",
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}
