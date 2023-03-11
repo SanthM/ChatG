@@ -1,5 +1,5 @@
 const venom = require('venom-bot');
-const openai = require('openai-api');
+const openai = require('openai-node');
 const prompt = 'Please input some text.';
 const engine = 'davinci';
 const completions = 1;
@@ -23,12 +23,12 @@ function start(client) {
 async function generateText(prompt, engine, maxTokens) {
   const promptString = prompt.trim();
   const tokenCount = (promptString.split(' ').length) + maxTokens;
-  const gptResponse = await openai_client.complete({
+  const gptResponse = await openai_client.completions.create({
     engine: engine,
     prompt: promptString,
-    maxTokens: tokenCount,
+    max_tokens: tokenCount,
     n: 1,
     stop: '\n'
   });
-  return gptResponse.data.choices[0].text.trim();
+  return gptResponse.choices[0].text.trim();
 }
