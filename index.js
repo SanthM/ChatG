@@ -1,55 +1,34 @@
-import { Client } from 'whatsapp-web.js';
-import openai from '@openai/api';
-import axios from 'axios';
+const venom = require('venom-bot');
+const openai = require('openai-api');
+const prompt = 'Please input some text.';
+const engine = 'davinci';
+const completions = 1;
+const openai_key = '<your_openai_key_here>';
 
-const openaiApiKey = 'YOUR_OPENAI_API_KEY';
-const openaiModelId = 'YOUR_OPENAI_MODEL_ID';
-const sessionClient = new openai.AuthenticatedClient(openaiApiKey);
+const openai_client = new openai(openai_key);
 
-const client = new Client({
-  puppeteer: { 
-    headless: true,
-    args: [
-      '--no-sandbox',
-      '--disable-setuid-sandbox',
-      '--disable-dev-shm-usage',
-      '--disable-accelerated-2d-canvas',
-      '--no-first-run',
-      '--no-zygote',
-      '--disable-gpu',
-    ],
-  },
-});
+venom.create().then((client) => start(client));
 
-client.on('qr', (qr) => {
-  console.log('QR code received: ', qr);
-});
-
-client.on('ready', () => {
-  console.log('Client is ready!');
-});
-
-client.on('message', async (message) => {
-  if (message.body.startsWith('/chatgpt ')) {
-    const messageToGPT = message.body.split('/chatgpt ')[1];
-    const gptResponse = await getGPTResponse(messageToGPT);
-    message.reply(gptResponse);
-  }
-});
-
-async function getGPTResponse(prompt) {
-  const gptResponse = await sessionClient.completions.create({
-    engine: 'davinci',
-    prompt: prompt,
-    maxTokens: 1024,
-    n: 1,
-    stop: ['\n'],
-    temperature: 0.7,
-    frequency_penalty: 0,
-    presence_penalty: 0,
-    model: openaiModelId,
+function start(client) {
+  client.onMessage(async (message) => {
+    if (message.body.toLowerCase().startsWith('/chatgpt ')) {
+      const userInput = message.body.slice(9);
+      const promptText = prompt + '\nUser: ' + userInput + '\nAI:';
+      const gptResponse = await generateText(promptText, engine, completions);
+      await client.reply(message.from, gptResponse, message.id.toString());
+    }
   });
-  return gptResponse.choices[0].text.trim();
 }
 
-client.initialize();
+async function generateText(prompt, engine, maxTokens) {
+  const promptString = prompt.trim();
+  const tokenCount = (promptString.split(' ').length) + maxTokens;
+  const gptResponse = await openai_client.complete({
+    engine: engine,
+    prompt: promptString,
+    maxTokens: tokenCount,
+    n: 1,
+    stop: '\n'
+  });
+  return gptResponse.data.choices[0].text.trim();
+}
