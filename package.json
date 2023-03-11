@@ -1,15 +1,15 @@
 {
+  "name": "whatsapp-openai-bot",
+  "version": "1.0.0",
+  "description": "A WhatsApp bot that uses OpenAI API to generate text",
+  "main": "index.js",
+  "author": "SanthM <smoddz@yopmail.net>",
+  "license": "MIT",
   "dependencies": {
-    "whatsapp-web.js": "^1.13.1",
-    "@openai/api": "^0.9.3",
-    "axios": "^0.24.0"
+    "venom-bot": "^1.10.0",
+    "openai-api": "^0.10.3"
   },
   "scripts": {
     "start": "node index.js"
-  },
-  "main": "index.js",
-  "type": "module",
-  "engines": {
-    "node": ">=14.0.0"
   }
 }
